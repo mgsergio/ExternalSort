@@ -76,6 +76,7 @@ if __name__ == '__main__':
                         help='Generated string will be at at most that long')
     parser.add_argument('--max_bytes', type=str,
                         action=ConvertSizeAction,
+                        required=True,
                         help='Generated file will be nearly that long.')
 
     args = parser.parse_args()
