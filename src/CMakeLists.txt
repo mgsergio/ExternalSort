@@ -1,14 +1,11 @@
-project(ExternalSort CXX)
-cmake_minimum_required(VERSION 3.9)
+set(SRC )
+set(EXECUTABLE_NAME sortfile)
 
-add_compile_options(
-  "-Wall"
-  "-Werror"
-  "-pedantic"
-  "-std=c++14"
-  "-g"
+add_subdirectory(io)
+add_subdirectory(sort)
+
+add_executable(${EXECUTABLE_NAME} main.cc)
+target_link_libraries(
+  ${EXECUTABLE_NAME}
+  io
 )
-
-set(SRC main.cc)
-
-add_executable(sortfile ${SRC})
