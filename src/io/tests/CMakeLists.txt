@@ -2,6 +2,7 @@ project(libio-tests)
 
 set(SRC
   main.cc
+  file_stream_test.cc
   memory_stream_test.cc
   string_wrapper_test.cc
 )

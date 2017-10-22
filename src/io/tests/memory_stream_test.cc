@@ -2,13 +2,14 @@
 #include "io/memory_stream.hh"
 
 #include <array>
+#include <cstring>
 
 using namespace io;
 using namespace std;
 
 namespace
 {
-TEST_CASE("working with an empty MemoryStream")
+TEST_CASE("[MemoryStream] working with an empty")
 {
   array<char, 16> buff{};
   MemoryStream<decltype(buff)> ms(buff, buff.size(), 0 /* size */, 0 /* pos */);
@@ -32,9 +33,15 @@ TEST_CASE("working with an empty MemoryStream")
       REQUIRE(c == bytes[i++]);
     REQUIRE(i == sizeof(bytes));
   }
+  SECTION("write a chunk of butes")
+  {
+    char const input[] = "Hello, world";
+    ms.write(input, sizeof(input));
+    REQUIRE(strcmp(input, buff.data()) == 0);
+  }
 }
 
-TEST_CASE("read from a preloaded stream")
+TEST_CASE("[MemoryStream] read from a preloaded stream")
 {
   char buff[] = "Hello, world";
   MemoryStream<decltype(buff)> ms(buff, sizeof(buff), sizeof(buff) - 1 /* size */, 0 /* pos */);
@@ -43,7 +50,7 @@ TEST_CASE("read from a preloaded stream")
 
   REQUIRE(!ms.eof());
 
-  SECTION("write bytes and read them back")
+  SECTION("read bytes one by one")
   {
     char otherBuff[] = "Hello, world";
     size_t i = 0;
@@ -51,9 +58,15 @@ TEST_CASE("read from a preloaded stream")
       REQUIRE(c == otherBuff[i++]);
     REQUIRE(i == sizeof(buff) - 1);
   }
+  SECTION("read a chunk of bytes")
+  {
+    array<char, 16> output;
+    ms.read(output.data(), sizeof(buff));
+    REQUIRE(strcmp(output.data(), buff) == 0);
+  }
 }
 
-TEST_CASE("eof should raise only after a reading attempt")
+TEST_CASE("[MemoryStream] eof should raise only after a reading attempt")
 {
   char buff[] = {'c'};
   MemoryStream<decltype(buff)> ms(buff, sizeof(buff), 1 /* size */);
@@ -66,7 +79,7 @@ TEST_CASE("eof should raise only after a reading attempt")
   REQUIRE(!ms.read(c));
 }
 
-TEST_CASE("override existing data")
+TEST_CASE("[MemoryStream] override existing data")
 {
   char buff[] = "Hello, world";
   MemoryStream<decltype(buff)> ms(buff, sizeof(buff), sizeof(buff) - 1 /* size */, 0 /* pos */);

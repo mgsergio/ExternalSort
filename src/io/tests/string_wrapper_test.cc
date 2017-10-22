@@ -17,7 +17,7 @@ void writeStringToSink(StringWrapper & sink, initializer_list<string> const l)
     sink.write(s);
 }
 
-TEST_CASE("smoke")
+TEST_CASE("[StringWrapper] smoke")
 {
   array<char, 128> buff{};
   MemoryStream<decltype(buff)> ms(buff, buff.size(), 0 /* size */);

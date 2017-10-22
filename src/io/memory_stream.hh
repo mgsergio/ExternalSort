@@ -35,11 +35,28 @@ public:
     return false;
   }
 
+  size_t read(char buff[], size_t size) override
+  {
+    size_t nRead = 0;
+    while (nRead < size && read(buff[nRead]))
+      ++nRead;
+    return nRead;
+  }
+
   void write(char c) override
   {
     assert(m_pos < m_cap);
     m_buff[m_pos++] = c;
     m_size = std::max(m_size, m_pos);
+  }
+
+  size_t write(char const buff[], size_t size) override
+  {
+    assert(m_pos < m_cap - size + 1);
+    size_t nWritten = 0;
+    while (nWritten < size)
+      write(buff[nWritten++]);
+    return nWritten;
   }
 
   bool eof() const override
