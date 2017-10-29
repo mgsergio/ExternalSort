@@ -61,7 +61,8 @@ TEST_CASE("[MemoryStream] read from a preloaded stream")
   SECTION("read a chunk of bytes")
   {
     array<char, 16> output;
-    ms.read(output.data(), sizeof(buff));
+    auto const bytesRead = ms.read(output.data(), sizeof(buff));
+    REQUIRE(bytesRead == sizeof(buff) - 1);
     REQUIRE(strcmp(output.data(), buff) == 0);
   }
 }

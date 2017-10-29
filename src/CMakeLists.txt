@@ -1,4 +1,3 @@
-set(SRC )
 set(EXECUTABLE_NAME sortfile)
 
 add_subdirectory(io)

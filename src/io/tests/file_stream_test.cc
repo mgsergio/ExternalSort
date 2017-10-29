@@ -104,7 +104,8 @@ TEST_CASE("[FileStream] read from a preloaded stream")
   SECTION("read a chunk of bytes")
   {
     char output[16]{};
-    fs.read(output, sizeof(buff));
+    auto const readBytes = fs.read(output, sizeof(buff));
+    REQUIRE(readBytes == sizeof(buff) - 1);
     REQUIRE(strcmp(output, buff) == 0);
   }
 }

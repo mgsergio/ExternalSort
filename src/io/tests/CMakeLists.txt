@@ -2,8 +2,11 @@ project(libio-tests)
 
 set(SRC
   main.cc
+  buffered_string_wrapper_test.cc
   file_stream_test.cc
+  helpers.hh
   memory_stream_test.cc
+  string_view_test.cc
   string_wrapper_test.cc
 )
 

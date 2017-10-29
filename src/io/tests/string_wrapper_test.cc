@@ -2,6 +2,8 @@
 #include "io/memory_stream.hh"
 #include "io/string_wrapper.hh"
 
+#include "helpers.hh"
+
 #include <array>
 #include <initializer_list>
 #include <iterator>
@@ -11,12 +13,6 @@ using namespace std;
 
 namespace
 {
-void writeStringToSink(StringWrapper & sink, initializer_list<string> const l)
-{
-  for (auto const & s : l)
-    sink.write(s);
-}
-
 TEST_CASE("[StringWrapper] smoke")
 {
   array<char, 128> buff{};
@@ -41,7 +37,7 @@ TEST_CASE("[StringWrapper] smoke")
   }
   SECTION("writing strings and read them back")
   {
-    writeStringToSink(sw, strings);
+    tests::writeStringToSink(sw, strings);
 
     sw.rewind();
     auto it = begin(strings);
