@@ -25,6 +25,8 @@ TEST_CASE("[StringWrapper] smoke")
     "World",
     "!",
     "Some",
+    "",
+    "",
     "more",
     "strings"
   };

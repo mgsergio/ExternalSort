@@ -7,16 +7,19 @@ namespace io
 {
 bool BufferedStringWrapper::read(StringView & s)
 {
-  if (eof())
+  assert(m_lastOp != LastOp::Write);
+  m_lastOp = LastOp::Read;
+
+  if (eof() && m_pos == m_end)
     return false;
 
   auto strEnd = m_pos;
-  while (strEnd < m_end && m_buff[strEnd != '\n'])
+  while (strEnd < m_end && m_buff[strEnd] != '\n')
     ++strEnd;
 
   if (strEnd != m_end)
   {
-    s = StringView(&m_buff.data()[m_pos], strEnd - m_pos + 1);
+    s = StringView(&m_buff.data()[m_pos], strEnd - m_pos);
     m_pos = strEnd + 1;
     return true;
   }
@@ -41,6 +44,9 @@ bool BufferedStringWrapper::read(StringView & s)
 
 void BufferedStringWrapper::write(StringView const & s)
 {
+  assert(m_lastOp != LastOp::Read);
+  m_lastOp = LastOp::Write;
+
   for (size_t written = 0; written != s.size();)
   {
     auto spaceLeft = empty() ? m_buff.size() : m_buff.size() - m_pos;
@@ -58,18 +64,30 @@ void BufferedStringWrapper::write(StringView const & s)
   }
   if (m_pos == m_buff.size())
     flush();
+  // TODO(mgsergio): Should those lines go befor if (m_pos == m_buff.size())
+  // since we'd like to force the buffer to be able to hold the whole string.
   m_buff[m_pos++] = '\n';
+  m_end = m_pos;
 }
 
 void BufferedStringWrapper::flush()
 {
+  if (m_lastOp != LastOp::Write)
+    return;
   m_stream.write(m_buff.data(), m_pos);
   m_pos = 0;
   m_end = 0;
 }
 
+bool BufferedStringWrapper::eof() const
+{
+  assert(m_lastOp != LastOp::Write);
+  return m_stream.eof() && m_pos == m_end;
+}
+
 void BufferedStringWrapper::rewind()
 {
+  flush();
   m_stream.rewind();
   init();
 }
@@ -84,6 +102,7 @@ void BufferedStringWrapper::init()
 {
   m_pos = 0;
   m_end = 0;
+  m_lastOp = LastOp::Unknown;
 }
 
 void BufferedStringWrapper::fetch()
@@ -93,15 +112,9 @@ void BufferedStringWrapper::fetch()
     auto const it = move(begin(m_buff) + m_pos, end(m_buff), begin(m_buff));
     m_pos = distance(begin(m_buff), it);
   }
-  // printf("Reading from stream to buff at pos %zd, %zd bytes\n", m_pos, m_buff.size() - m_pos);
   auto const bytesRead = m_stream.read(&m_buff.data()[m_pos], m_buff.size() - m_pos);
-  // printf("%zd bytes got form m_stream\n", bytesRead);
-  // printf("buffer after fetch:\n");
   m_end = m_pos + bytesRead;
   m_pos = 0;
-  // for (size_t i = 0; i < m_end; ++i)
-  //   putc(m_buff[i], stdout);
-  // putc('\n', stdout);
 }
 
 bool BufferedStringWrapper::empty() const

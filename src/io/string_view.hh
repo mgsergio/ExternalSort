@@ -25,6 +25,7 @@ public:
 
   size_t size() const { return m_size; }
   bool empty() const { return m_size == 0; }
+  char const * data() const { return m_buff; }
 
 private:
   char const * m_buff = nullptr;

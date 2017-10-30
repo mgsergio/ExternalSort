@@ -25,12 +25,19 @@ public:
   void write(StringView const & s);
   void flush();
 
-  bool eof() const { return m_stream.eof(); }
+  bool eof() const;
 
   void rewind();
   void truncate();
 
 private:
+  enum class LastOp
+  {
+    Unknown,
+    Read,
+    Write
+  };
+
   void init();
   void fetch();
 
@@ -40,5 +47,6 @@ private:
   std::vector<char> m_buff;
   size_t m_pos;
   size_t m_end;
+  LastOp m_lastOp;
 };
 }  // namespace io

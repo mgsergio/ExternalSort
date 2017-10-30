@@ -42,6 +42,8 @@ TEST_CASE("[BufferedStringWrapper] smoke")
     "World",
     "!",
     "Some",
+    "",
+    "",
     "more",
     "strings"
   };
@@ -56,12 +58,8 @@ TEST_CASE("[BufferedStringWrapper] smoke")
   {
     tests::writeStringToSink(bsw, strings);
 
-    bsw.flush();
-    // printf("What have we here?\n");
-    // for (size_t i = 0; i < buff.size() && buff[i]; ++i)
-    //   putc(buff[i], stdout);
-    // putc('\n', stdout);
     bsw.rewind();
+
     auto it = begin(strings);
     while (bsw.read(s))
     {
@@ -73,7 +71,6 @@ TEST_CASE("[BufferedStringWrapper] smoke")
   SECTION("read empty string")
   {
     bsw.write(StringView());
-    bsw.flush();
     bsw.rewind();
 
     REQUIRE(bsw.read(s));
@@ -83,7 +80,6 @@ TEST_CASE("[BufferedStringWrapper] smoke")
   {
     for (size_t i = 0; i < buff.size(); ++i)
       ms.write('a');
-    bsw.flush();
     bsw.rewind();
     REQUIRE(!bsw.read(s));
   }
