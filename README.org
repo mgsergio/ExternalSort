@@ -1,0 +1,19 @@
+* Simple external sort realization using classic MergeSort algorithm
+** Build
+#+begin_src sh
+  git clone https://github.com/mgsergio/ExternalSort.git
+  cd ExternalSort
+  git submodule update --init
+  mkdir build && cmake --chdir build cmake .. && cmake --build build --target
+#+end_src
+** Run tests
+#+begin_src sh
+  cd build && ctest --output-on-failure
+#+end_src
+** Run sort
+#+begin_src sh
+  build/src/sortfile --help
+#+end_src
+** TODOs:
+   - [ ] In-memory sort file by parts before running mergeSort
+   - [ ] Add benchmarks
